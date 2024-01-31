@@ -1,22 +1,13 @@
-FROM golang:latest AS builder
+FROM golang AS builder
 
 WORKDIR /go/src/app
 
 COPY main.go .
 RUN go mod init polianaLima/main
+RUN go build -o /go/src/app/main
 
+FROM scratch
 
-FROM golang:alpine3.19
+COPY --from=builder /go/src/app/main /go/src/app/main
 
-WORKDIR /go/src/app
-
-COPY --from=builder /go/src/app .
-
-
-EXPOSE 8080
-
-CMD [ "go", "run","main.go" ]
-
-
-
-
+CMD ["/go/src/app/main"]
